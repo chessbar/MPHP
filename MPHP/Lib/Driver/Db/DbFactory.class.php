@@ -52,7 +52,7 @@ final class DbFactory
 	private function getDriver($driver,$table,$full)
 	{
 		$class = "Db".$driver;//数据库驱动
-		$this->driverList[$table] = new $calss();
+		$this->driverList[$table] = new $class();
 		return $this->driverList[$table]->link($table,$full);
 	}
 	/**

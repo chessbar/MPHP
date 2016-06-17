@@ -28,7 +28,7 @@ final class ViewFactory
 	 * @param  [type] $driver [description]
 	 * @return [type]         [description]
 	 */
-	public function factory($driver =null)
+	public static function factory($driver =null)
 	{
 		if(is_null(self::$viewfactory)){
 			self::$viewfactory = new viewFactory();

@@ -51,7 +51,16 @@ abstract class Db implements DbInterface
 			if($table){
 				//初始化表
 				$this->table($table,$full);
+				//数据表
+				$this->table = $this->opt['table'];
+				//表字段
+				$this->fieldData = $this->opt['fieldData'];
+				//表主键 
+				$this->pri = $this->opt['pri'];
 			}
+			return $this->link;
+		}else{
+			$this->error('数据库连接失败');
 		}
 	}
 	/**
@@ -561,7 +570,7 @@ abstract class Db implements DbInterface
      */
     public function getLastSql()
     {
-    	return array_pop(Debug::$sqlExeArr)l
+    	return array_pop(Debug::$sqlExeArr);
     }
     /**
      * 获得所有sql语句
@@ -578,7 +587,7 @@ abstract class Db implements DbInterface
      */
     protected function recordSql($sql)
     {
-    	if(!preg_match('/\s*show/'),$sql)
+    	if(!preg_match('/\s*show/',$sql))
     	{
     		Debug::$sqlExeArr[] = $sql;
     	}
@@ -690,7 +699,7 @@ abstract class Db implements DbInterface
 	 */
 	public function delAll($table)
 	{
-		return $this->exe("DELETE FROM ".C('DB_PREFIX').$table)
+		return $this->exe("DELETE FROM ".C('DB_PREFIX').$table);
 	}
 	/**
 	 * 表关联
@@ -753,7 +762,7 @@ abstract class Db implements DbInterface
 				$f['key'] = $res['Key'] == 'PRI';
 				$f['default'] = $res['Default'];
 				$f['extra'] = $res['Extra'];
-				$fieldData[$res['field']] = $f;
+				$fieldData[$res['Field']] = $f;
 			}
 			DEBUG || F($name,$fieldData,APP_TABLE_PATH);
 		}

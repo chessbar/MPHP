@@ -546,10 +546,64 @@ function F($name,$value = false,$path=APP_CACHE_PATH)
 	return true;
 }
 /**
+ * 去空格，去除注释包括单行及多行注释
+ * @param string $content 数据
+ * @return string
+ */
+function compress($content)
+{
+    $str = ""; //合并后的字符串
+    $data = token_get_all($content);
+    $end = false; //没结束如$v = "hdphp"中的等号;
+    for ($i = 0, $count = count($data); $i < $count; $i++) {
+        if (is_string($data[$i])) {
+            $end = false;
+            $str .= $data[$i];
+        } else {
+            switch ($data[$i][0]) { //检测类型
+                //忽略单行多行注释
+                case T_COMMENT:
+                case T_DOC_COMMENT:
+                    break;
+                //去除格
+                case T_WHITESPACE:
+                    if (!$end) {
+                        $end = true;
+                        $str .= " ";
+                    }
+                    break;
+                //定界符开始
+                case T_START_HEREDOC:
+                    $str .= "<<<HDPHP\n";
+                    break;
+                //定界符结束
+                case T_END_HEREDOC:
+                    $str .= "HDPHP;\n";
+                    //类似str;分号前换行情况
+                    for ($m = $i + 1; $m < $count; $m++) {
+                        if (is_string($data[$m]) && $data[$m] == ';') {
+                            $i = $m;
+                            break;
+                        }
+                        if ($data[$m] == T_CLOSE_TAG) {
+                            break;
+                        }
+                    }
+                    break;
+
+                default:
+                    $end = false;
+                    $str .= $data[$i][1];
+            }
+        }
+    }
+    return $str;
+}
+/**
  * 删除空格注销
  * @return [type] [description]
  */
-function compress($content)
+function compress1($content)
 {		
 	$str = '';//合并后的字符串
 	$data = token_get_all($content);
@@ -668,8 +722,47 @@ function U($path, $args = array())
 {
     return Route::getUrl($path, $args);
 }
-
-
+/**
+ * 加载核心模型
+ * @param [type] $table  表名
+ * @param [type] $full   是否为全表名
+ * @param array  $param  参数
+ * @param [type] $driver 驱动
+ */
+function M($table=null,$full=null,$param=array(),$driver=null)
+{
+	return new Model($table,$full,$param,$driver);
+}
+/**
+ * 获得扩展模型
+ * @param [type] $name   模型名称不加Model后缀
+ * @param [type] $full   是否为表全名
+ * @param array  $param  参数
+ * @param [type] $driver 驱动
+ */
+function K($name,$full=null,$param=array(),$driver=null)
+{
+	$class = ucfirst($name) . "Model";
+	return new $class(strtolower($name),$full,$param);
+}
+/**
+ * 获得关联模型
+ * @param [type] $tableName [description]
+ * @param [type] $full      [description]
+ */
+function R($tableName=null,$full=null)
+{
+	return new RelationModel($tableName,$full);
+}
+/**
+ * 获得视图模型
+ * @param [type] $tableName [description]
+ * @param [type] $full      [description]
+ */
+function V($tableName=null,$full=null)
+{
+	return new ViewModel($tableName,$full);
+}
 
 
 

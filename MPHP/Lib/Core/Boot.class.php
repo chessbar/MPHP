@@ -225,6 +225,57 @@ final class Boot{
 	 */
 	static private function compile()
 	{
-		
+		if(DEBUG){
+			is_file(TEMP_FILE) and unlink(TEMP_FILE);
+			return;
+		}
+		$compile ='';
+		//编译常量
+		$_define = get_defined_constants(true);
+		foreach ($_define['user'] as $n => $d) {
+			if($d=='\\') $d ='\\\\';
+			else $d = is_int($d) ? intval($d) : "'{$d}'";
+			$compile .= "defined('{$n}') or define('{$n}',{$d});";
+		}
+		$files = array(
+            MPHP_CORE_PATH . 'App.class.php', //MPHP顶级类
+            MPHP_CORE_PATH . 'Controller.class.php', //控制器基类
+            MPHP_CORE_PATH . 'Debug.class.php', //Debug处理类
+            MPHP_CORE_PATH . 'Hook.class.php', //事件处理类
+            MPHP_CORE_PATH . 'MPHP.class.php', //MPHP顶级类
+            MPHP_CORE_PATH . 'MException.class.php', //异常处理类
+            MPHP_CORE_PATH . 'Log.class.php', //Log日志类
+            MPHP_CORE_PATH . 'Route.class.php', //URL处理类
+            MPHP_FUNCTION_PATH . 'Functions.php', //应用函数
+            MPHP_DRIVER_PATH . 'Cache/Cache.class.php', //缓存基类
+            MPHP_DRIVER_PATH . 'Cache/CacheFactory.class.php', //缓存工厂类
+            MPHP_DRIVER_PATH . 'Cache/CacheFile.class.php', //文件缓存处理类
+            MPHP_DRIVER_PATH . 'Db/Db.class.php', //数据处理基类
+            MPHP_DRIVER_PATH . 'Db/DbFactory.class.php', //数据工厂类
+            MPHP_DRIVER_PATH . 'Db/DbInterface.class.php', //数据接口类
+            MPHP_DRIVER_PATH . 'Db/DbMysqli.class.php', //Mysqli驱动类
+            MPHP_DRIVER_PATH . 'Model/Model.class.php', //模型基类
+            MPHP_DRIVER_PATH . 'Model/RelationModel.class.php', //关联模型类
+            MPHP_DRIVER_PATH . 'Model/ViewModel.class.php', //视图模型类
+            MPHP_DRIVER_PATH . 'View/ViewM.class.php', //Hd视图驱动类
+            MPHP_DRIVER_PATH . 'View/ViewFactory.class.php', //视图工厂库
+            MPHP_DRIVER_PATH . 'View/ViewCompile.class.php', //模板编译类
+            MPHP_EXTEND_PATH . 'Tool/Dir.class.php', //目录操作类
+        );
+        foreach ($files as $f) {
+        	$con = compress(trim(file_get_contents($f)));
+        	$compile .= substr($con,-2) == '?>' ? trim(substr($con,5,-2)) : trim(substr($con,5));
+        }
+        //加载核心配置项
+        $compile .= 'C('.var_export(C(),true).');';
+        $compile .= 'L('.var_export(L(),true).');';
+        $compile .= 'alias_import('.var_export(alias_import(),true).');';
+        //编译内容
+       	$compile = "<?php if(!defined('DEBUG'))exit;".$compile."MPHP::init();App::run();?>";
+       	//创建boot编译文件
+       	if(is_dir(TEMP_PATH) or dir_create(TEMP_PATH) and is_writeable(TEMP_PATH))
+       		return file_put_contents(TEMP_FILE,compress($compile));
+       	header("Content-type:text/html;charset=utf-8");
+       	exit("<div style='border:solid 1px #dcdcdc;padding:30px;'>请修改" . realpath(dirname(TEMP_PATH)) . "目录权限</div>");
 	}
 }

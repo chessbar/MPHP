@@ -96,7 +96,7 @@ class Cache
 		}
 		$mphp_queue = array_unique($_queue);
 		//超过队列最大值
-		if(count($mphp_queue) ? $this->options['length']){
+		if(count($mphp_queue) > $this->options['length']){
 			$gc = array_shift($mphp_queue);
 			if($gc) $this->del($gc);
 		}

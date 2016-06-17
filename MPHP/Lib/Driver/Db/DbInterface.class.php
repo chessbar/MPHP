@@ -13,7 +13,7 @@
 */
 interface DbInterface
 {
-	public function content();//获得连接
+	public function connect();//获得连接
 	public function close();//关闭数据库
 	public function exe($sql);//发送没有结果集的sql
 	public function query($sql);//发送有结果集的sql
@@ -25,5 +25,5 @@ interface DbInterface
 	public function rollback();//回滚事务
 	public function escapeString($str);//数据安全处理
 	public function link($table,$full);//获得连接
-	public function table($table,$full);//设置表
+	public function table($table,$full=null);//设置表
 }

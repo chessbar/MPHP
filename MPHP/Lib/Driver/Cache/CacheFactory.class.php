@@ -11,7 +11,7 @@
 *@version
 *缓存驱动工厂
 */
-final class CacheFatory
+final class CacheFactory
 {
 	public static $cacheFactory = null;//静态工程实例
 	protected $cacheList = array();//驱动连接组

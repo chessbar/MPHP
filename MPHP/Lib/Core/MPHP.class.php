@@ -19,8 +19,8 @@ final  class MPHP{
 	static public function init()
 	{
 		//加载应用配置
-		//is_file(APP_CONFIG_PATH.'config.php') and C(require(APP_CONFIG_PATH.'config.php'));
-		//is_file(APP_LANGUAGE_PATH . C('LANGUAGE') . '.php') and L(require(APP_LANGUAGE_PATH . C('LANGUAGE') . '.php'));
+		is_file(APP_CONFIG_PATH.'config.php') and C(require(APP_CONFIG_PATH.'config.php'));
+		is_file(APP_LANGUAGE_PATH . C('LANGUAGE') . '.php') and L(require(APP_LANGUAGE_PATH . C('LANGUAGE') . '.php'));
 		//解析路由
 		Route::parseUrl();
 		//导入钩子
@@ -48,8 +48,8 @@ final  class MPHP{
         defined('MODULE_TAG_PATH') or define('MODULE_TAG_PATH', MODULE_PATH . 'Tag/');
         defined('MODULE_LIB_PATH')  or define('MODULE_LIB_PATH', MODULE_PATH . 'Lib/');
         //应用配置
-        //is_file(MODULE_CONFIG_PATH.'config.php') and C(require(MODULE_CONFIG_PATH.'config.php'));
-        //is_file(MODULE_LANGUAGE_PATH.C('LANGUAGE').'.php') and C(require(MODULE_LANGUAGE_PATH.C('LANGUAGE').'.php'));
+        is_file(MODULE_CONFIG_PATH.'config.php') and C(require(MODULE_CONFIG_PATH.'config.php'));
+        is_file(MODULE_LANGUAGE_PATH.C('LANGUAGE').'.php') and C(require(MODULE_LANGUAGE_PATH.C('LANGUAGE').'.php'));
         //模板常量目录
         defined('MODULE_VIEW_PATH') or define('MODULE_VIEW_PATH',strstr(C('TPL_PATH'),'/') ? C('TPL_PATH').C('TPL_STYLE') : MODULE_PATH.C('TPL_PATH').'/'.C('TPL_STYLE'));
         defined('MODULE_PUBLIC_PATH') or define('MODULE_PUBLIC_PATH',MODULE_VIEW_PATH.'Public/');
